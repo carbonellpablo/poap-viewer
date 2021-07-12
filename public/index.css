@@ -1,0 +1,31 @@
+html {
+  box-sizing: border-box;
+  background-color: #000;
+  width:100%;
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+
+body {
+  width:100%;
+  height: 100%;
+  margin:0;
+  padding:0;
+  overflow-y:auto;
+  background-color: #000;
+  }
+  
+header{
+    background-color: #AFA;
+    height: 100px;
+    width: 100%;
+    
+  }
+  
+footer{
+    background-color: #AFA;
+    height: 100px;
+    width: 100%;
+  }
+  
