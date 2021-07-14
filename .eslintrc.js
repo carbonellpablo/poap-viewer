@@ -21,7 +21,8 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
-    'no-console': 'warn',
+    'no-console': 'error',
+    'no-nested-ternary': 'off',
     'react/prop-types': 'off',
     'react/self-closing-comp': 'warn',
     'react/jsx-uses-react': 'warn',
@@ -60,4 +61,4 @@ module.exports = {
       typescript: {},
     },
   },
-}; 
+};

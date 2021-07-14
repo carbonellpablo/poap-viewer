@@ -19,11 +19,11 @@ export interface Token {
 }
 
 export type Tokens = Token[];
-export type GetTokensCallback = () => void;
+export type GetTokensCallback = (address: string) => void;
 
 export interface TokensState {
   alreadyFetched: boolean;
-  error: boolean;
+  error: string;
   data: Tokens | [];
 }
 
@@ -32,20 +32,20 @@ export interface TokensHook {
   getTokens: GetTokensCallback;
 }
 
-
 function parseTokens(
   chain: 'eth' | 'xdai',
   apiTokens: ApiGraphResponse
 ): Tokens | [] {
-  if (!apiTokens?.account) return [];
   const parsedTokens: Tokens = [];
 
-  apiTokens.account.tokens.forEach((apiToken: ApiToken) => {
-    const tokenID = apiToken.id;
-    const eventID = apiToken.event.id;
+  if (apiTokens.account) {
+    apiTokens.account.tokens.forEach((apiToken: ApiToken) => {
+      const tokenID = apiToken.id;
+      const eventID = apiToken.event.id;
 
-    parsedTokens.push({ chain, tokenID, eventID });
-  });
+      parsedTokens.push({ chain, tokenID, eventID });
+    });
+  }
 
   return parsedTokens;
 }
@@ -71,40 +71,44 @@ async function fetchGraphQL(
   return jsonResponse.data;
 }
 
-const useTokens = (address: string): TokensHook => {
+const useTokens = (): TokensHook => {
   const [tokens, setTokens] = useState<TokensState>({
     alreadyFetched: false,
-    error: false,
+    error: '',
     data: [],
   });
 
-  const execute = async () => {
+  const execute = async (address: string): Promise<void> => {
     try {
-      const ethResponse = await fetchGraphQL(api.graphql.eth, address);
-      const xdaiResponse = await fetchGraphQL(api.graphql.eth, address);
-      const ethTokens = parseTokens('eth', ethResponse);
-      const xdaiTokens = parseTokens('xdai', xdaiResponse);
-      const data = [...ethTokens, ...xdaiTokens];
+      const [ethResponse, xdaiResponse] = await Promise.all([
+        fetchGraphQL(api.graphql.eth, address),
+        fetchGraphQL(api.graphql.xdai, address),
+      ]);
 
-      setTokens((currentState: TokensState) => ({
-        ...currentState,
+      const data = [
+        ...parseTokens('eth', ethResponse),
+        ...parseTokens('xdai', xdaiResponse),
+      ];
+
+      setTokens({
         alreadyFetched: true,
+        error: '',
         data,
-      }));
-    } catch (e) {
-      setTokens((currentState: TokensState) => ({
-        ...currentState,
+      });
+    } catch {
+      setTokens({
         alreadyFetched: true,
-        error: true,
-      }));
-
-      // eslint-disable-next-line no-console
-      console.log('address tokens api', e);
+        error: `there was an error fetching TOKENS`,
+        data: [],
+      });
     }
   };
 
   // to avoid infinite calls when inside a `useEffect`
-  const getTokens = useCallback<GetTokensCallback>(execute, []);
+  const getTokens = useCallback<GetTokensCallback>(
+    (address) => execute(address),
+    []
+  );
 
   return { tokens, getTokens };
 };

@@ -21,22 +21,22 @@ export interface ApiEvent {
 }
 
 export type ApiEvents = ApiEvent[];
-export type PoapEvents = ParsedEvent[];
-export type GetPoapEventsCallback = () => void;
+export type Events = ParsedEvent[];
+export type FetchEventsCallback = () => void;
 
-export interface PoapEventsState {
+export interface EventsState {
   alreadyFetched: boolean;
-  error: boolean;
-  data: PoapEvents | [];
+  error: string;
+  data: Events | [];
 }
 
-export interface PoapEventsHook {
-  poapEvents: PoapEventsState;
-  getPoapEvents: GetPoapEventsCallback;
+export interface EventsHook {
+  events: EventsState;
+  fetchEvents: FetchEventsCallback;
 }
 
-function parseEvents(apiEvents: ApiEvents): PoapEvents {
-  const poapEvents: PoapEvents = [];
+function parseEvents(apiEvents: ApiEvents): Events {
+  const poapEvents: Events = [];
 
   apiEvents.forEach((event: ApiEvent) => {
     const newEvent: ParsedEvent = {
@@ -60,10 +60,10 @@ function parseEvents(apiEvents: ApiEvents): PoapEvents {
   return poapEvents;
 }
 
-const usePoapEvents = (): PoapEventsHook => {
-  const [poapEvents, setPoapEvents] = useState<PoapEventsState>({
+const useEvents = (): EventsHook => {
+  const [events, setEvents] = useState<EventsState>({
     alreadyFetched: false,
-    error: false,
+    error: '',
     data: [],
   });
 
@@ -76,29 +76,26 @@ const usePoapEvents = (): PoapEventsHook => {
         throw new Error(jsonResponse);
       }
 
-      const data: PoapEvents = parseEvents(jsonResponse);
+      const data: Events = parseEvents(jsonResponse);
 
-      setPoapEvents((currentState: PoapEventsState) => ({
-        ...currentState,
+      setEvents({
         alreadyFetched: true,
+        error: '',
         data,
-      }));
-    } catch (e) {
-      setPoapEvents((currentState: PoapEventsState) => ({
-        ...currentState,
+      });
+    } catch {
+      setEvents({
         alreadyFetched: true,
-        error: true,
-      }));
-
-      // eslint-disable-next-line no-console
-      console.log('poap events api', e);
+        error: `there was an error fetching EVENTS from the API`,
+        data: [],
+      });
     }
   };
 
   // to avoid infinite calls when inside a `useEffect`
-  const getPoapEvents = useCallback<GetPoapEventsCallback>(execute, []);
+  const fetchEvents = useCallback<FetchEventsCallback>(execute, []);
 
-  return { poapEvents, getPoapEvents };
+  return { events, fetchEvents };
 };
 
-export default usePoapEvents;
+export default useEvents;
