@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { EventsState, ParsedEvent } from '../../api/useEvents';
+import { EventsState } from '../../api/useEvents';
 
-import useTokens, { Token } from '../../api/useTokens';
+import useTokens from '../../api/useTokens';
 import DisplayBadges from '../../components/DisplayBadges/DisplayBadges';
 import Loading from '../../components/Loading/Loading';
 import NoBadges from '../../components/NoBadges/NoBadges';
@@ -11,19 +11,13 @@ import InvalidAddress from '../../components/InvalidAddress/InvalidAddress';
 
 import useAccount from '../../hooks/useAccount';
 import './AddressTokens.css';
+import { Events, Tokens, AccountBadges } from '../../shared/types';
 
 export interface Props {
   events: EventsState;
 }
 
-export type AccountBadge = ParsedEvent & Token;
-
-export type AccountBadges = AccountBadge[] | [];
-
-function generateAccountBadges(
-  events: ParsedEvent[],
-  tokens: Token[]
-): AccountBadges {
+function generateAccountBadges(events: Events, tokens: Tokens): AccountBadges {
   if (tokens.length === 0) return [];
 
   return tokens.map((token) => {
@@ -46,9 +40,9 @@ export default function AddressTokens({ events }: Props): JSX.Element {
   useEffect(() => setAccount(unverifiedAccount), []);
   useEffect(() => {
     if (account.verified) {
-      setLoading(false);
       if (account.error) {
         setInvalidAddress(true);
+        setLoading(false);
       } else {
         getTokens(account.eth);
       }
@@ -57,12 +51,12 @@ export default function AddressTokens({ events }: Props): JSX.Element {
 
   useEffect(() => {
     if (tokens.alreadyFetched && events.alreadyFetched) {
-      setLoading(false);
       if (tokens.error || events.error) {
         setError(tokens.error || events.error);
       } else {
         setAccountBadges(generateAccountBadges(events.data, tokens.data));
       }
+      setLoading(false);
     }
   }, [tokens, events]);
 
@@ -72,6 +66,9 @@ export default function AddressTokens({ events }: Props): JSX.Element {
     }
 
     if (invalidAddress) {
+      // eslint-disable-next-line no-console
+      console.log(account.error);
+
       return <InvalidAddress />; // {account.error}
     }
 
@@ -83,7 +80,7 @@ export default function AddressTokens({ events }: Props): JSX.Element {
       return <NoBadges />;
     }
 
-    return <DisplayBadges />;
+    return <DisplayBadges accountBadges={accountBadges} />;
   };
 
   return <div className="AddressTokens">{renderComponent()}</div>;

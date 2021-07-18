@@ -1,31 +1,29 @@
 html {
   box-sizing: border-box;
-  background-color: #000;
-  width:100%;
+  background-color: rgb(236, 143, 143);
+  width: 100%;
   height: 100%;
-  margin:0;
-  padding:0;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  width:100%;
+  width: 100%;
   height: 100%;
-  margin:0;
-  padding:0;
-  overflow-y:auto;
-  background-color: #000;
-  }
-  
-header{
-    background-color: #AFA;
-    height: 100px;
-    width: 100%;
-    
-  }
-  
-footer{
-    background-color: #AFA;
-    height: 100px;
-    width: 100%;
-  }
-  
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  background-color: rgb(236, 143, 143);
+}
+
+header {
+  background-color: #afa;
+  height: 100px;
+  width: 100%;
+}
+
+footer {
+  background-color: #afa;
+  height: 100px;
+  width: 100%;
+}
