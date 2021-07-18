@@ -15,7 +15,7 @@ export interface ApiEvent {
   country: string;
   event_url: string;
   image_url: string;
-  year: number;
+  year: string;
   start_date: string;
   virtual_event: boolean;
 }
@@ -48,7 +48,7 @@ function parseEvents(apiEvents: ApiEvents): Events {
       country: event.country,
       event_url: event.event_url,
       image_url: event.image_url,
-      year: event.year,
+      year: event.year.toString(),
       start_date: event.start_date,
       timestampDate: Date.parse(event.start_date),
       virtual_event: event.virtual_event,

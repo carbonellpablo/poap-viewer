@@ -3,7 +3,7 @@ import Fuse from 'fuse.js';
 import Toolbar from '../Toolbar/Toolbar';
 import GroupsContainer from '../GroupsContainer/GroupsContainer';
 import './DisplayBadges.css';
-import { AccountBadges, AccountBadge } from '../../shared/types';
+import { AccountBadges, Badge } from '../../shared/types';
 
 export interface Props {
   accountBadges: AccountBadges;
@@ -34,7 +34,7 @@ export interface Filters {
 
 const generateBadgesToRender = (
   toolbarSettings: ToolbarSettings,
-  fuse: Fuse<AccountBadge>,
+  fuse: Fuse<Badge>,
   accountBadges: AccountBadges
 ): BadgesToRender => {
   const { searchInput, filters, sorting } = toolbarSettings;
@@ -62,7 +62,7 @@ const sortByDate = (
 const search = (
   searchInput: string,
   accountBadges: AccountBadges,
-  fuse: Fuse<AccountBadge>
+  fuse: Fuse<Badge>
 ): SearchedBadges => {
   const searchQuery = searchInput.trim();
 
