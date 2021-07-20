@@ -3,54 +3,49 @@ import Fuse from 'fuse.js';
 import Toolbar from '../Toolbar/Toolbar';
 import GroupsContainer from '../GroupsContainer/GroupsContainer';
 import './DisplayBadges.css';
-import { AccountBadges, Badge } from '../../shared/types';
+import {
+  AccountBadges,
+  AccountBadge,
+  FilteredBadges,
+  Size,
+  ToolbarSettings,
+  BadgesToRender,
+  Sorting,
+  SortedBadges,
+  SearchedBadges,
+  Filters,
+  Location,
+  Chain,
+  BadgesWithSize,
+} from '../../shared/types';
 
 export interface Props {
   accountBadges: AccountBadges;
 }
 
-export type BadgesToRender = AccountBadges;
-export type SearchedBadges = AccountBadges;
-export type FilteredBadges = AccountBadges;
-export type SortedBadges = AccountBadges;
-export type BadgedToRender = AccountBadges;
-
-export type Size = 'small' | 'large';
-export type Sorting = 'newest' | 'oldest';
-export type Location = 'all' | 'premises' | 'virtual';
-export type Chain = 'all' | 'eth' | 'xdai' | 'none';
-
-export interface ToolbarSettings {
-  searchInput: string;
-  size: Size;
-  filters: Filters;
-  sorting: Sorting;
-}
-
-export interface Filters {
-  chain: Chain;
-  location: Location;
-}
+const applySize = (size: Size, filteredBadges: FilteredBadges) =>
+  filteredBadges.map((badge) => ({ ...badge, size }));
 
 const generateBadgesToRender = (
   toolbarSettings: ToolbarSettings,
-  fuse: Fuse<Badge>,
+  fuse: Fuse<AccountBadge>,
   accountBadges: AccountBadges
 ): BadgesToRender => {
-  const { searchInput, filters, sorting } = toolbarSettings;
+  const { searchInput, filters, sorting, size } = toolbarSettings;
   const searchResults = search(searchInput, accountBadges, fuse);
   const filteredBadges = applyFilters(searchResults, filters);
+  const badgesWithSize = applySize(size, filteredBadges);
 
-  return sortByDate(filteredBadges, sorting);
+  return sortByDate(badgesWithSize, sorting);
 };
 
 const sortByDate = (
-  filteredBadges: AccountBadges,
+  badgesWithSize: BadgesWithSize,
   sorting: Sorting
 ): SortedBadges => {
-  if (filteredBadges.length === 0) return filteredBadges;
-  if (filteredBadges.length === 1) return filteredBadges;
-  const sortedArray: AccountBadges = filteredBadges.slice();
+  if (badgesWithSize.length <= 1) return badgesWithSize;
+
+  const sortedArray: SortedBadges = badgesWithSize.slice();
 
   if (sorting === 'newest') {
     return sortedArray.sort((a, b) => b.timestampDate - a.timestampDate);
@@ -62,7 +57,7 @@ const sortByDate = (
 const search = (
   searchInput: string,
   accountBadges: AccountBadges,
-  fuse: Fuse<Badge>
+  fuse: Fuse<AccountBadge>
 ): SearchedBadges => {
   const searchQuery = searchInput.trim();
 
@@ -94,7 +89,7 @@ const applyFilters = (
 };
 
 export default function DisplayBadges({ accountBadges }: Props): JSX.Element {
-  const [badgesToRender, setBadgesToRender] = useState<AccountBadges>([]);
+  const [badgesToRender, setBadgesToRender] = useState<BadgesToRender>([]);
   const defaultSettings: ToolbarSettings = {
     filters: { chain: 'all', location: 'all' },
     searchInput: '',

@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import api from './api.constants';
 
-export interface ParsedEvent extends Omit<ApiEvent, 'id'> {
+export interface ParsedEvent extends Omit<ApiEvent, 'id' | 'image_url'> {
   eventID: number;
   timestampDate: number;
+  imageURL: string;
 }
 
 export interface ApiEvent {
@@ -47,7 +48,7 @@ function parseEvents(apiEvents: ApiEvents): Events {
       city: event.city,
       country: event.country,
       event_url: event.event_url,
-      image_url: event.image_url,
+      imageURL: event.image_url,
       year: event.year.toString(),
       start_date: event.start_date,
       timestampDate: Date.parse(event.start_date),

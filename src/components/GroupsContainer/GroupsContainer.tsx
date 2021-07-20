@@ -1,17 +1,9 @@
 import './GroupsContainer.css';
-import { title } from 'process';
-import { Badges } from '../../shared/types';
+import BadgeGroup from '../BadgeGroup/BadgeGroup';
+import { BadgesToRender, IBadgeGroup, BadgeGroups } from '../../shared/types';
 
 interface Props {
-  badgesToRender: Badges;
-}
-
-interface BadgeGroups {
-  [k: string]: BadgeGroup;
-}
-interface BadgeGroup {
-  title: string;
-  badges: Badges;
+  badgesToRender: BadgesToRender;
 }
 
 export default function GroupsContainer({
@@ -37,9 +29,15 @@ export default function GroupsContainer({
       groupIndexes.push(badge.year);
     }
   });
-  const sortedGroups: BadgeGroup[] = groupIndexes.map(
+  const sortedGroups: IBadgeGroup[] = groupIndexes.map(
     (groupTitle: string) => badgeGroups[groupTitle]
   );
 
-  return <div className="GroupsContainer" />;
+  return (
+    <div className="GroupsContainer">
+      {sortedGroups.map((badgeGroup) => (
+        <BadgeGroup badgeGroup={badgeGroup} />
+      ))}
+    </div>
+  );
 }
