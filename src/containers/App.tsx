@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
-import useEvents from './api/useEvents';
+import useEvents from '../api/useEvents';
 
 // components
-import EnterAddress from './pages/EnterAddress/EnterAddress';
-import AddressTokens from './pages/AddressTokens/AddressTokens';
-import TokenDetails from './pages/TokenDetails/TokenDetails';
+import EnterAddress from '../pages/EnterAddress/EnterAddress';
+import TokensContainer from './TokensContainer';
 
 function App({ match }: RouteComponentProps): JSX.Element {
   const { events, fetchEvents } = useEvents();
@@ -19,9 +18,11 @@ function App({ match }: RouteComponentProps): JSX.Element {
   return (
     <Switch>
       <Route path="/scan/:unverifiedAccount">
-        <AddressTokens events={events} />
+        <TokensContainer events={events} />
       </Route>
-      <Route path="/token/:tokenID" component={TokenDetails} />
+      <Route path="/token/:tokenID">
+        <TokensContainer events={events} />
+      </Route>
       <Route path="/" component={EnterAddress} />
     </Switch>
   );

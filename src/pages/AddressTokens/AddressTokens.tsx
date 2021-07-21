@@ -1,78 +1,146 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { EventsState } from '../../api/useEvents';
-
-import useTokens from '../../api/useTokens';
-import DisplayBadges from '../../components/DisplayBadges/DisplayBadges';
-import Loading from '../../components/Loading/Loading';
-import NoBadges from '../../components/NoBadges/NoBadges';
-import Error from '../../components/Error/Error';
-
-import useAccount from '../../hooks/useAccount';
+import Fuse from 'fuse.js';
+import Toolbar from '../../components/Toolbar/Toolbar';
+import GroupsContainer from '../../components/GroupsContainer/GroupsContainer';
 import './AddressTokens.css';
-import { Events, Tokens, AccountBadges } from '../../shared/types';
+import {
+  AccountBadges,
+  AccountBadge,
+  FilteredBadges,
+  Size,
+  ToolbarSettings,
+  BadgesToRender,
+  Sorting,
+  SortedBadges,
+  SearchedBadges,
+  Filters,
+  Location,
+  Chain,
+  BadgesWithSize,
+} from '../../shared/types';
 
-export interface Props {
-  events: EventsState;
+interface Props {
+  accountBadges: AccountBadges;
 }
 
-function generateAccountBadges(events: Events, tokens: Tokens): AccountBadges {
-  if (tokens.length === 0) return [];
+const applySize = (size: Size, filteredBadges: FilteredBadges) =>
+  filteredBadges.map((badge) => ({ ...badge, size }));
 
-  return tokens.map((token) => {
-    const { tokenID, chain, eventID } = token;
+const generateBadgesToRender = (
+  toolbarSettings: ToolbarSettings,
+  fuse: Fuse<AccountBadge>,
+  accountBadges: AccountBadges
+): BadgesToRender => {
+  const { searchInput, filters, sorting, size } = toolbarSettings;
+  const searchResults = search(searchInput, accountBadges, fuse);
+  const filteredBadges = applyFilters(searchResults, filters);
+  const badgesWithSize = applySize(size, filteredBadges);
 
-    return { tokenID, chain, ...events[eventID] };
-  });
-}
+  return sortByDate(badgesWithSize, sorting);
+};
 
-export default function AddressTokens({ events }: Props): JSX.Element {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
-  const [accountBadges, setAccountBadges] = useState<AccountBadges>([]);
+const sortByDate = (
+  badgesWithSize: BadgesWithSize,
+  sorting: Sorting
+): SortedBadges => {
+  if (badgesWithSize.length <= 1) return badgesWithSize;
 
-  const { unverifiedAccount } = useParams<{ unverifiedAccount: string }>();
-  const { account, setAccount } = useAccount();
-  const { tokens, getTokens } = useTokens();
+  const sortedArray: SortedBadges = badgesWithSize.slice();
 
-  useEffect(() => setAccount(unverifiedAccount), []);
-  useEffect(() => {
-    if (account.verified) {
-      if (account.error) {
-        setError(account.error);
-        setLoading(false);
-      } else {
-        getTokens(account.eth);
-      }
-    }
-  }, [account]);
+  if (sorting === 'newest') {
+    return sortedArray.sort((a, b) => b.timestampDate - a.timestampDate);
+  }
 
-  useEffect(() => {
-    if (tokens.alreadyFetched && events.alreadyFetched) {
-      if (tokens.error || events.error) {
-        setError(tokens.error || events.error);
-      } else {
-        setAccountBadges(generateAccountBadges(events.data, tokens.data));
-      }
-      setLoading(false);
-    }
-  }, [tokens, events]);
+  return sortedArray.sort((a, b) => a.timestampDate - b.timestampDate);
+};
 
-  const renderComponent = () => {
-    if (loading) {
-      return <Loading />;
-    }
+const search = (
+  searchInput: string,
+  accountBadges: AccountBadges,
+  fuse: Fuse<AccountBadge>
+): SearchedBadges => {
+  const searchQuery = searchInput.trim();
 
-    if (error) {
-      return <Error />; // {props: error}
-    }
+  if (searchQuery) {
+    const result = fuse.search(searchQuery);
 
-    if (accountBadges.length === 0) {
-      return <NoBadges />;
-    }
+    return result.map((res) => res.item);
+  }
 
-    return <DisplayBadges accountBadges={accountBadges} />;
+  return accountBadges;
+};
+
+const applyFilters = (
+  searchResults: AccountBadges,
+  filters: Filters
+): FilteredBadges => {
+  if (filters.chain !== 'all' || filters.location !== 'all') {
+    return searchResults.filter((badge) => {
+      const virtual = filters.location === 'virtual';
+
+      return (
+        (badge.chain === filters.chain || filters.chain === 'all') &&
+        (badge.virtual_event === virtual || filters.location === 'all')
+      );
+    });
+  }
+
+  return searchResults;
+};
+
+export default function AddressTokens({ accountBadges }: Props): JSX.Element {
+  const [badgesToRender, setBadgesToRender] = useState<BadgesToRender>([]);
+  const defaultSettings: ToolbarSettings = {
+    filters: { chain: 'all', location: 'all' },
+    searchInput: '',
+    size: 'large',
+    sorting: 'newest',
+  };
+  const handleChangeToolbar = (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.target.form);
+    const formObject = Object.fromEntries(formData.entries());
+    const filters: Filters = {
+      chain: formObject.chain as Chain,
+      location: formObject.location as Location,
+    };
+    const toolbarSettings: ToolbarSettings = {
+      filters,
+      searchInput: formObject.searchInput as string,
+      size: formObject.size as Size,
+      sorting: formObject.sorting as Sorting,
+    };
+
+    setBadgesToRender(
+      generateBadgesToRender(toolbarSettings, fuse, accountBadges)
+    );
   };
 
-  return <div className="AddressTokens">{renderComponent()}</div>;
+  const fuse = new Fuse(accountBadges, {
+    keys: ['name', 'description', 'city', 'country', 'year', 'end_date'],
+    shouldSort: false,
+    threshold: 0.2,
+  });
+
+  useEffect(
+    () =>
+      setBadgesToRender(
+        generateBadgesToRender(defaultSettings, fuse, accountBadges)
+      ),
+    []
+  );
+
+  return (
+    <div className="AddressTokens">
+      <h2>{`Displaying ${badgesToRender.length} badges from ${accountBadges.length}`}</h2>
+      <Toolbar handleChangeToolbar={handleChangeToolbar} />
+      {badgesToRender.length > 0 ? (
+        <GroupsContainer badgesToRender={badgesToRender} />
+      ) : (
+        <h2>
+          There are no results to display that matches your search and filters
+        </h2>
+      )}
+    </div>
+  );
 }
