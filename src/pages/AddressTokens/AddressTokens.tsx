@@ -7,7 +7,6 @@ import DisplayBadges from '../../components/DisplayBadges/DisplayBadges';
 import Loading from '../../components/Loading/Loading';
 import NoBadges from '../../components/NoBadges/NoBadges';
 import Error from '../../components/Error/Error';
-import InvalidAddress from '../../components/InvalidAddress/InvalidAddress';
 
 import useAccount from '../../hooks/useAccount';
 import './AddressTokens.css';
@@ -31,7 +30,6 @@ export default function AddressTokens({ events }: Props): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
   const [accountBadges, setAccountBadges] = useState<AccountBadges>([]);
-  const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
 
   const { unverifiedAccount } = useParams<{ unverifiedAccount: string }>();
   const { account, setAccount } = useAccount();
@@ -41,7 +39,7 @@ export default function AddressTokens({ events }: Props): JSX.Element {
   useEffect(() => {
     if (account.verified) {
       if (account.error) {
-        setInvalidAddress(true);
+        setError(account.error);
         setLoading(false);
       } else {
         getTokens(account.eth);
@@ -63,13 +61,6 @@ export default function AddressTokens({ events }: Props): JSX.Element {
   const renderComponent = () => {
     if (loading) {
       return <Loading />;
-    }
-
-    if (invalidAddress) {
-      // eslint-disable-next-line no-console
-      console.log(account.error);
-
-      return <InvalidAddress />; // {account.error}
     }
 
     if (error) {
