@@ -9,7 +9,7 @@ export interface ApiToken {
   event: {
     id: number;
   };
-  id: number;
+  id: string;
 }
 
 export interface Token {
@@ -40,7 +40,7 @@ function parseTokens(
 
   if (apiTokens.account) {
     apiTokens.account.tokens.forEach((apiToken: ApiToken) => {
-      const tokenID = apiToken.id;
+      const tokenID = parseInt(apiToken.id, 10);
       const eventID = apiToken.event.id;
 
       parsedTokens.push({ chain, tokenID, eventID });

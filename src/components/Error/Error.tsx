@@ -1,5 +1,9 @@
 import './Error.css';
 
-export default function Error(): JSX.Element {
-  return <div className="Error">Error</div>;
+interface Props {
+  error: string;
+}
+
+export default function Error({ error }: Props): JSX.Element {
+  return <div className="Error">{error}</div>;
 }

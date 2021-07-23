@@ -11,7 +11,7 @@ export default function BadgeGroup({ badgeGroup }: Props): JSX.Element {
     <div className="BadgeGroup">
       <h2>{badgeGroup.title}</h2>
       {badgeGroup.badges.map((badge) => (
-        <Badge badge={badge} />
+        <Badge key={badge.tokenID} badge={badge} />
       ))}
     </div>
   );

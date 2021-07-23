@@ -89,6 +89,7 @@ const applyFilters = (
 };
 
 export default function AddressTokens({ accountBadges }: Props): JSX.Element {
+
   const [badgesToRender, setBadgesToRender] = useState<BadgesToRender>([]);
   const defaultSettings: ToolbarSettings = {
     filters: { chain: 'all', location: 'all' },

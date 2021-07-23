@@ -36,7 +36,7 @@ export default function GroupsContainer({
   return (
     <div className="GroupsContainer">
       {sortedGroups.map((badgeGroup) => (
-        <BadgeGroup badgeGroup={badgeGroup} />
+        <BadgeGroup key={badgeGroup.title} badgeGroup={badgeGroup} />
       ))}
     </div>
   );

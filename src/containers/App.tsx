@@ -20,7 +20,7 @@ function App({ match }: RouteComponentProps): JSX.Element {
       <Route path="/scan/:unverifiedAccount">
         <TokensContainer events={events} />
       </Route>
-      <Route path="/token/:tokenID">
+      <Route path="/token/:unverifiedTokenID">
         <TokensContainer events={events} />
       </Route>
       <Route path="/" component={EnterAddress} />

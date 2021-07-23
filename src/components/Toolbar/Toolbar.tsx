@@ -6,7 +6,6 @@ export interface Props {
 }
 
 export default function Toolbar({ handleChangeToolbar }: Props): JSX.Element {
-  // eslint-disable-next-line no-console
   return (
     <div className="Toolbar">
       <form onChange={handleChangeToolbar} onSubmit={(e) => e.preventDefault()}>
