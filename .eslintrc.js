@@ -27,6 +27,7 @@ module.exports = {
     'react/self-closing-comp': 'warn',
     'react/jsx-uses-react': 'warn',
     'react/react-in-jsx-scope': 'off',
+    'jsx-a11y/no-autofocus': 'off',
     'react/jsx-filename-extension': [
       2,
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },

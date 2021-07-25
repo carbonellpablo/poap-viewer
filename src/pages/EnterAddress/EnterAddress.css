@@ -1,3 +1,72 @@
-h1 {
+.EnterAddress {
+  width: 100%;
+  height: 100%;
+  display: block;
+  text-align: center;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+form {
+  position: relative;
+}
+
+p {
+  text-align: center;
+  width: 340px;
+  margin: 0px auto 40px auto;
+}
+
+span {
+  font-weight: 700;
+}
+
+.submitButton {
+  width: 100%;
+  cursor: pointer;
+  max-width: 350px;
+  margin: 0 auto 40px auto;
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 400;
+  font-family: Archivo Narrow, sans-serif;
+  font-size: 24px;
+  font-size: 1.5rem;
+  border: 0;
   color: #fff;
+  text-decoration: none;
+  background: #6534ff;
+  transition: all 0.2s ease-out;
+  box-shadow: 0 10px 30px -5px rgba(101, 52, 255, 0.5);
+  -webkit-appearance: button;
+}
+
+.inputAddress {
+  max-width: 500px;
+  width: 100%;
+  height: 50px;
+  padding: 12px;
+  box-shadow: none;
+  border: 2px solid #fff;
+  background: #fff;
+  transition: right 0.2s ease-out;
+  border-radius: 4px;
+  margin: 0 auto 40px auto;
+  color: #6534ff;
+  outline-color: #6534ff;
+  font-size: 16px;
+  font-size: 1rem;
+}
+
+@media (min-width: 48em) {
+  input {
+    font-size: 16px;
+    font-size: 1rem;
+  }
+}
+
+.error {
+  color: lightcoral;
+  height: 20px;
+  font-weight: 700;
 }

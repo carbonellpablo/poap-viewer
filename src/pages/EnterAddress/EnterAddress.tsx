@@ -27,14 +27,14 @@ export default function EnterAddress(): JSX.Element {
 
   return (
     <div className="EnterAddress">
-      <h1>{account.error}</h1>
+      <p className="error">{account.error}</p>
       <p>
         The <span>Proof of attendance protocol</span> (POAP) reminds you off the{' '}
         <span>cool places</span> you’ve been to.
       </p>
-
       <form onSubmit={handleSubmit}>
         <input
+          className="inputAddress"
           type="text"
           name="unverifiedAccount"
           id="unverifiedAccount"
@@ -42,9 +42,11 @@ export default function EnterAddress(): JSX.Element {
           maxLength={42}
           minLength={6}
           pattern="[a-zA-Z0-9\.]+"
+          autoFocus
           required
         />
-        <input type="submit" />
+
+        <input className="submitButton" type="submit" value="Display Badges" />
       </form>
     </div>
   );

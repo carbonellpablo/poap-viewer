@@ -29,7 +29,10 @@
     <meta name="twitter:site" content="@poapxyz" />
     <meta name="twitter:creator" content="@poapxyz" />
     <meta name="twitter:image" content="%PUBLIC_URL%/images/poap_rss.png" />
-
+    <link
+      href="https://fonts.googleapis.com/css?family=Archivo+Narrow:400,500,700|Archivo:400,500,700"
+      rel="stylesheet"
+    />
     <meta itemprop="name" content="POAP: Proof of Attendance Protocol" />
     <meta
       itemprop="description"
@@ -126,9 +129,23 @@
     />
   </head>
   <body>
-    <header></header>
+    <header>
+      <a href="/"><img src="%PUBLIC_URL%/images/logo.svg" alt="POAP" /></a>
+    </header>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <footer></footer>
+    <footer>
+      <img
+        src="%PUBLIC_URL%/images/footerBadges.svg"
+        alt="footer Badges"
+        class="footerBadges"
+      />
+
+      <img
+        src="%PUBLIC_URL%/images/ethlogo.png"
+        alt="ETH logo"
+        class="ethlogo"
+      />
+    </footer>
   </body>
 </html>
