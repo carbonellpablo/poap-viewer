@@ -9,18 +9,21 @@ interface Props {
 
 export default function Badge({ badge }: Props): JSX.Element {
   const { imageURL, name, size, tokenID } = badge;
-  const sizeInPx = size === 'large' ? '200px' : '100px';
+  const sizeInPx = size === 'large' ? '240px' : '140px';
 
   return (
-    <Link className="BadgeLink" to={`/token/${tokenID}`} title={name}>
-      <LazyLoad height={sizeInPx} offset={500}>
+    <Link className={`link${size}`} to={`/token/${tokenID}`} title={name}>
+      <LazyLoad
+        height={sizeInPx}
+        offset={400}
+        resize
+        style={{ width: sizeInPx }}
+      >
         <img
           className={`BadgeImage ${size}`}
           src={imageURL}
           alt={name}
           title={name}
-          height={sizeInPx}
-          width={sizeInPx}
         />
       </LazyLoad>
     </Link>
