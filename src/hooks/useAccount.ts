@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { useState, useCallback } from 'react';
+import { ens } from '../shared/constants';
 
 export interface AccountState {
   verified: boolean;
@@ -8,12 +9,15 @@ export interface AccountState {
   ens: string;
   fancyEth: string;
 }
-export type SetAccountCallback = (unverifiedAccount: string) => void;
+type SetAccountCallback = (unverifiedAccount: string) => void;
 
 export interface AccountHook {
   account: AccountState;
   setAccount: SetAccountCallback;
 }
+
+const generateFancyEth = (account: string): string =>
+  `${account.slice(0, 6)}...${account.slice(-4)}`;
 
 const isValidAddress = (account: string): boolean => {
   if (!/^(0x)?[0-9a-f]{40}$/i.test(account)) {
@@ -23,12 +27,6 @@ const isValidAddress = (account: string): boolean => {
 
   return true;
 };
-
-function resolveENS(account: string) {
-  const provider = new ethers.providers.CloudflareProvider();
-
-  return provider.resolveName(account);
-}
 
 function isValidEnsFormat(account: string): boolean {
   const regex = new RegExp(/[a-z.0-9]{2,}.\.eth$/);
@@ -44,22 +42,42 @@ const useAccount = (): AccountHook => {
     ens: '',
     fancyEth: '',
   });
+  const [provider, setProvider] = useState(
+    ethers.getDefaultProvider('mainnet', {
+      infura: {
+        projectId: ens.infura.projectID,
+        projectSecret: ens.infura.key,
+      },
+    })
+  );
 
   const execute = async (unverifiedAccount: string): Promise<void> => {
     const lowerCaseAccount = unverifiedAccount.toLowerCase();
 
     if (isValidAddress(lowerCaseAccount)) {
-      setAccountState({
-        verified: true,
-        error: '',
-        eth: lowerCaseAccount,
-        ens: '',
-        fancyEth: '',
-      });
+      try {
+        const ensFromEth = await provider.lookupAddress(lowerCaseAccount);
+
+        setAccountState({
+          verified: true,
+          error: '',
+          eth: lowerCaseAccount,
+          ens: ensFromEth,
+          fancyEth: generateFancyEth(lowerCaseAccount),
+        });
+      } catch {
+        setAccountState({
+          verified: true,
+          error: '',
+          eth: lowerCaseAccount,
+          ens: '',
+          fancyEth: generateFancyEth(lowerCaseAccount),
+        });
+      }
     } else {
       try {
         if (isValidEnsFormat(lowerCaseAccount)) {
-          const address = await resolveENS(lowerCaseAccount);
+          const address = await provider.resolveName(lowerCaseAccount);
 
           if (address) {
             const lowerCaseAddress = address.toLowerCase();
@@ -69,7 +87,7 @@ const useAccount = (): AccountHook => {
               error: '',
               eth: lowerCaseAddress,
               ens: lowerCaseAccount,
-              fancyEth: '',
+              fancyEth: generateFancyEth(lowerCaseAddress),
             });
           } else {
             setAccountState({
