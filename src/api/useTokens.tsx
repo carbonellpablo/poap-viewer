@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import api from './api.constants';
+import { api } from '../shared/constants';
 
 export interface ApiGraphResponse {
   account: { tokens: ApiToken[] };

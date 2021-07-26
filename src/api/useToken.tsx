@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { AccountBadge, AccountBadges } from '../shared/types';
-import api from './api.constants';
+import { api } from '../shared/constants';
 
 interface ApiToken {
   event: {
@@ -40,6 +40,7 @@ const parseToken = (apiToken: ApiToken): AccountBadge => ({
   start_date: apiToken.event.start_date,
   timestampDate: 0,
   virtual_event: false,
+  owner: apiToken.owner,
 });
 
 export type GetTokenCallback = (
@@ -105,7 +106,6 @@ const useToken = (): TokenHook => {
       });
     }
   };
-
 
   const getToken = useCallback<GetTokenCallback>(
     (tokenID, accountBadges) => execute(tokenID, accountBadges),

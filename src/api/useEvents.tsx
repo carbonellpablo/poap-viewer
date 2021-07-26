@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import api from './api.constants';
+import { api } from '../shared/constants';
 
 export interface ParsedEvent extends Omit<ApiEvent, 'id' | 'image_url'> {
   eventID: number;
