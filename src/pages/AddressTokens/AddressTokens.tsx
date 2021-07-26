@@ -132,14 +132,20 @@ export default function AddressTokens({ accountBadges }: Props): JSX.Element {
 
   return (
     <div className="AddressTokens">
+      <p>{`You have attended ${accountBadges.length} events in the past.`}</p>
+
       <Toolbar handleChangeToolbar={handleChangeToolbar} />
-      <h2>{`Displaying ${badgesToRender.length} badges from ${accountBadges.length}`}</h2>
+      {accountBadges.length !== badgesToRender.length &&
+      badgesToRender.length > 0 ? (
+        <p>{`Currently showing you only ${badgesToRender.length} badges based on your filters`}</p>
+      ) : null}
 
       {badgesToRender.length > 0 ? (
         <GroupsContainer badgesToRender={badgesToRender} />
       ) : (
         <p>
-          There are no results to display that matches your search and filters
+          Currently not showing any results given your filters and search
+          criteria.
         </p>
       )}
     </div>

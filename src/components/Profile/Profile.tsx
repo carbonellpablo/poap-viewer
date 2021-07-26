@@ -14,8 +14,8 @@ export default function Profile({ account }: Props): JSX.Element {
   return (
     <Link className="Profile" to={`/scan/${ens || eth}`} title="scan address">
       {blockie ? <img alt="blockie" src={blockie} /> : null}
-      <h2>{ens || fancyEth}</h2>
-      {ens ? <h2>({fancyEth})</h2> : null}
+      <h4>{ens || fancyEth}</h4>
+      {ens ? <h5>({fancyEth})</h5> : null}
     </Link>
   );
 }

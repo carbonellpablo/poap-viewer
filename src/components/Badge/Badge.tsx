@@ -12,18 +12,17 @@ export default function Badge({ badge }: Props): JSX.Element {
   const sizeInPx = size === 'large' ? '200px' : '100px';
 
   return (
-    <div className="Badge">
-      <Link className="BadgeLink" to={`/token/${tokenID}`} title={name}>
-        <LazyLoad height={sizeInPx} offset={500}>
-          <img
-            src={imageURL}
-            alt={name}
-            title={name}
-            height={sizeInPx}
-            width={sizeInPx}
-          />
-        </LazyLoad>
-      </Link>
-    </div>
+    <Link className="BadgeLink" to={`/token/${tokenID}`} title={name}>
+      <LazyLoad height={sizeInPx} offset={500}>
+        <img
+          className={`BadgeImage ${size}`}
+          src={imageURL}
+          alt={name}
+          title={name}
+          height={sizeInPx}
+          width={sizeInPx}
+        />
+      </LazyLoad>
+    </Link>
   );
 }

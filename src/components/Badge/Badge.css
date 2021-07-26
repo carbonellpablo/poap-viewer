@@ -1,0 +1,11 @@
+.BadgeImage {
+  border-radius: 100px;
+}
+
+.large {
+  border-radius: 100px;
+}
+
+.small {
+  border-radius: 50px;
+}

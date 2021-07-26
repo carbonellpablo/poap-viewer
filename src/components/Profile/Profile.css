@@ -19,7 +19,7 @@
   height: 50px;
   border-radius: 5px;
 }
-.Profile h2 {
-  padding: 5px;
-  border-radius: 40px;
+.Profile h4,
+h5 {
+  margin-top: 10px;
 }
