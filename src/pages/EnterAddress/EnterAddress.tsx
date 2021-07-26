@@ -1,14 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './EnterAddress.css';
 import { useHistory } from 'react-router-dom';
 import useAccount from '../../hooks/useAccount';
+import Loading from '../../components/Loading/Loading';
 
 export default function EnterAddress(): JSX.Element {
   const history = useHistory();
   const { account, setAccount } = useAccount();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const target = e.target as typeof e.target & {
       unverifiedAccount: { value: string };
     };
@@ -19,11 +22,16 @@ export default function EnterAddress(): JSX.Element {
 
   useEffect(() => {
     if (account.verified) {
+      setLoading(false);
       if (!account.error) {
         history.push(`/scan/${account.ens || account.eth}`);
       }
     }
   }, [account]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="EnterAddress">
