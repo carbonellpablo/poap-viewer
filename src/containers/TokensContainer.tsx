@@ -7,13 +7,13 @@ import useToken from '../api/useToken';
 import AddressTokens from '../pages/AddressTokens/AddressTokens';
 import TokenDetails from '../pages/TokenDetails/TokenDetails';
 import Loading from '../components/Loading/Loading';
-import NoBadges from '../components/NoBadges/NoBadges';
 import Error from '../components/Error/Error';
+import Profile from '../components/Profile/Profile';
 
 import useAccount from '../hooks/useAccount';
 import { Events, Tokens, AccountBadges, AccountBadge } from '../shared/types';
 
-export interface Props {
+interface Props {
   events: EventsState;
 }
 
@@ -22,13 +22,17 @@ interface Params {
   unverifiedTokenID: string;
 }
 
-function generateAccountBadges(events: Events, tokens: Tokens): AccountBadges {
+function generateAccountBadges(
+  events: Events,
+  tokens: Tokens,
+  owner: string
+): AccountBadges {
   if (tokens.length === 0) return [];
 
   return tokens.map((token) => {
     const { tokenID, chain, eventID } = token;
 
-    return { tokenID, chain, ...events[eventID] };
+    return { owner, tokenID, chain, ...events[eventID] };
   });
 }
 
@@ -43,7 +47,6 @@ export default function TokensContainer({ events }: Props): JSX.Element {
   const { token, getToken } = useToken();
   const { path, params } = useRouteMatch<Params>();
 
-
   useEffect(() => {
     if (path === '/scan/:unverifiedAccount') {
       const { unverifiedAccount }: Params = params;
@@ -53,6 +56,9 @@ export default function TokensContainer({ events }: Props): JSX.Element {
         unverifiedAccount !== account.ens
       ) {
         setAccount(unverifiedAccount);
+      } else if (!tokens.alreadyFetched) {
+        setLoading(true);
+        getTokens(account.eth);
       }
     }
     if (path === '/token/:unverifiedTokenID') {
@@ -73,12 +79,14 @@ export default function TokensContainer({ events }: Props): JSX.Element {
   }, [path]);
 
   useEffect(() => {
-    if (account.verified) {
-      if (account.error) {
-        setError(account.error);
-        setLoading(false);
-      } else {
-        getTokens(account.eth);
+    if (path === '/scan/:unverifiedAccount') {
+      if (account.verified) {
+        if (account.error) {
+          setError(account.error);
+          setLoading(false);
+        } else {
+          getTokens(account.eth);
+        }
       }
     }
   }, [account]);
@@ -94,7 +102,17 @@ export default function TokensContainer({ events }: Props): JSX.Element {
       if (tokens.error || events.error) {
         setError(tokens.error || events.error);
       } else {
-        setAccountBadges(generateAccountBadges(events.data, tokens.data));
+        const tempAccountBadges = generateAccountBadges(
+          events.data,
+          tokens.data,
+          account.eth
+        );
+
+        if (tempAccountBadges.length === 0) {
+          setError('no badges');
+        } else {
+          setAccountBadges(tempAccountBadges);
+        }
       }
       setLoading(false);
     }
@@ -105,6 +123,7 @@ export default function TokensContainer({ events }: Props): JSX.Element {
       if (token.error) {
         setError(token.error);
       } else {
+        if (token.data) setAccount(token.data.owner);
         setBadgeToRender(token.data);
       }
       setLoading(false);
@@ -119,15 +138,22 @@ export default function TokensContainer({ events }: Props): JSX.Element {
     if (error) {
       return <Error error={error} />;
     }
+
     if (path === '/scan/:unverifiedAccount') {
-      return accountBadges.length === 0 ? (
-        <NoBadges />
-      ) : (
-        <AddressTokens accountBadges={accountBadges} />
+      return (
+        <>
+          <Profile account={account} />
+          <AddressTokens accountBadges={accountBadges} />
+        </>
       );
     }
 
-    return <TokenDetails badgeToRender={badgeToRender} />;
+    return (
+      <>
+        <Profile account={account} />
+        <TokenDetails badgeToRender={badgeToRender} />
+      </>
+    );
   };
 
   return renderComponent();

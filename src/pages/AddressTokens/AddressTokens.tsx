@@ -89,7 +89,6 @@ const applyFilters = (
 };
 
 export default function AddressTokens({ accountBadges }: Props): JSX.Element {
-
   const [badgesToRender, setBadgesToRender] = useState<BadgesToRender>([]);
   const defaultSettings: ToolbarSettings = {
     filters: { chain: 'all', location: 'all' },
@@ -133,14 +132,15 @@ export default function AddressTokens({ accountBadges }: Props): JSX.Element {
 
   return (
     <div className="AddressTokens">
-      <h2>{`Displaying ${badgesToRender.length} badges from ${accountBadges.length}`}</h2>
       <Toolbar handleChangeToolbar={handleChangeToolbar} />
+      <h2>{`Displaying ${badgesToRender.length} badges from ${accountBadges.length}`}</h2>
+
       {badgesToRender.length > 0 ? (
         <GroupsContainer badgesToRender={badgesToRender} />
       ) : (
-        <h2>
+        <p>
           There are no results to display that matches your search and filters
-        </h2>
+        </p>
       )}
     </div>
   );

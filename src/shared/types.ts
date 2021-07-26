@@ -5,7 +5,7 @@ export type Tokens = Token[];
 export type Events = ParsedEvent[];
 
 // displayBadges
-export type AccountBadge = ParsedEvent & Token;
+export type AccountBadge = ParsedEvent & Token & { owner: string };
 export type AccountBadges = AccountBadge[] | [];
 export type SearchedBadges = AccountBadges;
 export type FilteredBadges = AccountBadges;
