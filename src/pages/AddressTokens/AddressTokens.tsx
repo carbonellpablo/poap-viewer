@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Fuse from 'fuse.js';
 import Toolbar from '../../components/Toolbar/Toolbar';
-import GroupsContainer from '../../components/GroupsContainer/GroupsContainer';
+import GroupsContainer from '../../containers/GroupsContainer';
 import './AddressTokens.css';
 import {
   AccountBadges,

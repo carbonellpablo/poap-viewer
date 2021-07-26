@@ -1,6 +1,5 @@
-import './GroupsContainer.css';
-import BadgeGroup from '../BadgeGroup/BadgeGroup';
-import { BadgesToRender, IBadgeGroup, BadgeGroups } from '../../shared/types';
+import BadgeGroup from '../components/BadgeGroup/BadgeGroup';
+import { BadgesToRender, IBadgeGroup, BadgeGroups } from '../shared/types';
 
 interface Props {
   badgesToRender: BadgesToRender;
@@ -34,10 +33,10 @@ export default function GroupsContainer({
   );
 
   return (
-    <div className="GroupsContainer">
+    <>
       {sortedGroups.map((badgeGroup) => (
         <BadgeGroup key={badgeGroup.title} badgeGroup={badgeGroup} />
       ))}
-    </div>
+    </>
   );
 }
