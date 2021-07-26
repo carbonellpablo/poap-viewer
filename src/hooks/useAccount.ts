@@ -42,7 +42,7 @@ const useAccount = (): AccountHook => {
     ens: '',
     fancyEth: '',
   });
-  const [provider, setProvider] = useState(
+  const [provider] = useState(
     ethers.getDefaultProvider('mainnet', {
       infura: {
         projectId: ens.infura.projectID,
