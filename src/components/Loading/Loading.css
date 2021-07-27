@@ -9,10 +9,8 @@
   justify-content: center;
 }
 .Loading img {
-  height: 90vw;
-  width: 90vw;
-  max-height: 500px;
-  max-width: 500px;
+  height: 100px;
+  width: 100px;
   margin: 0;
   padding: 0;
 }

@@ -1,6 +1,6 @@
 import './Loading.css';
 import { useEffect } from 'react';
-import loadingGif from './loading.gif';
+import loadingGif from './loading.svg';
 
 export default function Loading(): JSX.Element {
   // if it is loading for more than 5 seconds, refresh the whole app.
