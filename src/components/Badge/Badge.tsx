@@ -1,6 +1,7 @@
 import './Badge.css';
 import { Link } from 'react-router-dom';
 import LazyLoad from 'react-lazyload';
+
 import { BadgeWithSize } from '../../shared/types';
 
 interface Props {
@@ -15,9 +16,10 @@ export default function Badge({ badge }: Props): JSX.Element {
     <Link className={`link${size}`} to={`/token/${tokenID}`} title={name}>
       <LazyLoad
         height={sizeInPx}
-        offset={400}
         resize
+        offset={10000}
         style={{ width: sizeInPx }}
+        scrollContainer=".BadgeGroup"
       >
         <img
           className={`BadgeImage ${size}`}
