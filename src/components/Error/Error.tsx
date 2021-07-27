@@ -5,5 +5,9 @@ interface Props {
 }
 
 export default function Error({ error }: Props): JSX.Element {
-  return <div className="Error">{error}</div>;
+  return (
+    <div className="Error">
+      <h2>No badges</h2>
+    </div>
+  );
 }
