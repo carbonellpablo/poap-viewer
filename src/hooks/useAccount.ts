@@ -43,7 +43,7 @@ const useAccount = (): AccountHook => {
     fancyEth: '',
   });
   const [provider] = useState(
-    ethers.getDefaultProvider('mainnet', {
+    new ethers.providers.InfuraProvider('mainnet', {
       infura: {
         projectId: ens.infura.projectID,
         projectSecret: ens.infura.key,
